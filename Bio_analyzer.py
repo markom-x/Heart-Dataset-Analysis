@@ -22,7 +22,7 @@ class HeartDatasetLoader:
             "cleveland": pd.read_csv(f"{base_path}/processed.cleveland.data", names=COLUMNS, na_values="?"),
             "california": pd.read_csv(f"{base_path}/processed.va.data", names=COLUMNS, na_values="?"),
             "hungarian": pd.read_csv(f"{base_path}/processed.hungarian.data", names=COLUMNS, na_values="?"),
-            "switzerland": pd.read_csv(f"{base_path}/processed.switzerland.data", names=COLUMNS, na_values="?"),
+            "switzerland": pd.read_csv(f"{base_path}/processed.switzerland.data", names=COLUMNS, na_values=["?", 0]),
         }
 
     def get(self, name):
@@ -47,7 +47,7 @@ def main():
     st.header("Exploring the data")
     
     gaussian(cleveland_df, california_df, hungarian_df, switzerland_df, loader)
-    data(cleveland_df)
+    data(cleveland_df, california_df, hungarian_df, switzerland_df)
 
 
 def get_sample(df):
@@ -78,7 +78,7 @@ def show_map():
 
 
 
-def data(cleveland_df):
+def data(cleveland_df, california_df, hungarian_df, switzerland_df):
     st.subheader("Correlation between age and resting blood pressure")
     st.write("Taking just the cleveland dataset (as we have seen is the most complete) we notice that the possibility of heart failure increases with aging. This is caused by different factors:")
     st.markdown(
@@ -117,34 +117,7 @@ def data(cleveland_df):
     st.latex(r"\hat{y} = mx + b")
     st.divider()
 
-    st.subheader("Heatmap for high correlations of different values")
-
-    age = ["20-30", "30-40", "40-50", "50-60", "60-70"]
-    restecg = ["Normal", "ST-T wave abnormality", "Left Ventricular hypertrophy"]
     
-
-    harvest = np.array([[0.8, 2.4, 2.5, 3.9, 1.3],
-                        [2.4, 0.0, 4.0, 1.0, 2.3],
-                        [1.1, 2.4, 0.8, 4.3, 5.3]])
-    # harvest = create_table()
-
-
-    fig, ax = plt.subplots()
-    im = ax.imshow(harvest)
-
-    ax.set_xticks(range(len(age)), labels=age,
-                rotation=45, ha="right", rotation_mode="anchor")
-    ax.set_yticks(range(len(restecg)), labels=restecg)
-
-    for i in range(len(restecg)):
-        for j in range(len(age)):
-            text = ax.text(j, i, harvest[i, j],
-                        ha="center", va="center", color="w")
-
-    ax.set_title("Harvest of local farmers (in tons/year)")
-    fig.tight_layout()
-    st.pyplot(fig)
-
 
 
 
@@ -221,11 +194,43 @@ def gaussian(cleveland_df, california_df, hungarian_df, switzerland_df, loader):
     st.write("I genuinely expected to find higher values for american cities (it was really the only purpose of the plot) but interstingly Cleveland takes place behind Budapest. Another finding is that turistic cities like San Francisco and Zurich have broader std probably for the presence of different ethnical groups")
 
     st.divider()
+    st.subheader("Cholesterol mean (mg/dl) by Age and City")
+
+    table = create_table(cleveland_df, california_df, hungarian_df, switzerland_df)
+    fig, ax = plt.subplots()
+    im = ax.imshow(table.values)
+    ax.set_xticks(np.arange(len(table.columns)))
+    ax.set_yticks(np.arange(len(table.index)))
+    ax.set_xticklabels(table.columns)
+    ax.set_yticklabels(table.index)
+    for i in range(len(table.index)):
+        for j in range(len(table.columns)):
+            value = table.values[i, j]
+            if not np.isnan(value):
+                ax.text(j, i, f'{value:.0f}', ha="center", va="center", color="black", fontsize=8)
+    ax.set_title("Cholesterol (mean) by Age Group and City")
+    fig.tight_layout()
+    st.pyplot(fig)
+    st.write("Unfortunately we have no measurement for Zurich")
 
 
 def create_table(cleveland_df, california_df, hungarian_df, switzerland_df):
-    cleveland_df.merge(california_df, how='full outer', on='age')
-    #create a big dataframe with all the values indexed for the corrispondent city
+    cleveland_df['city'] = 'Cleveland'
+    california_df['city'] = 'San Francisco'
+    hungarian_df['city'] = 'Budapest'
+
+    combined = pd.concat([
+        cleveland_df, california_df, hungarian_df, switzerland_df
+    ], ignore_index=True)
+
+    bins = [20, 30, 40, 50, 60, 70, 80]
+    labels = ['20-29', '30-39', '40-49', '50-59', '60-69', '70-79']
+    combined['age_group'] = pd.cut(combined['age'], bins=bins, labels=labels, right=False)
+
+    table = combined.pivot_table(
+        index='city', columns='age_group', values='chol', aggfunc='mean'
+    )
+    return table
 
 
 if __name__ == "__main__":
