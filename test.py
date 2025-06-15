@@ -1,52 +1,33 @@
 import pandas as pd
 import numpy as np
-import pytest
-
-
-from Bio_analyzer import HeartDatasetLoader, show_map, gaussian, create_table
-
-dfs = [
-    pd.DataFrame({
-        "age": [50+i, 60+i, 70+i],
-        "trestbps": [120+i, 130+i, np.nan]
-    })
-    for i in range(1, 5)
-]
-
-df1, df2, df3, df4 = dfs
-
+from Bio_analyzer import create_table, HeartDatasetLoader  
 
 def test_create_table():
-    assert create_table() ==...
+    cleveland = pd.DataFrame({'age': [25, 35, 45], 'chol': [200, 220, 240]})
+    california = pd.DataFrame({'age': [32, 42, 52], 'chol': [180, 210, 230]})
+    hungarian = pd.DataFrame({'age': [27, 37, 47], 'chol': [190, 215, 250]})
+    switzerland = pd.DataFrame({'age': [30, 40, 50], 'chol': [0, 0, 0]}) 
+    
+    result = create_table(cleveland, california, hungarian, switzerland)
+    # Check index is correct
+    assert set(result.index) == {'Cleveland', 'San Francisco', 'Budapest'}
+    # Check columns are correct (age groups)
+    assert '30-39' in result.columns
+    # Check values are means (manually check one value)
+    assert np.isclose(result.loc['Cleveland', '20-29'], 200)
+    assert np.isnan(result.loc['San Francisco', '20-29'])
 
-
-
-
-
-"""
-def test_gaussian_basic():
-    df = make_test_df()
-    result = gaussian(df, df, df, df, loader)
-    assert isinstance(result, dict)
-    assert "San Francisco" in result
-    mean, std = result["San Francisco"]
-    assert np.isclose(mean, 125.0)
-    assert std > 0
-
-
-def test_loader_get(tmp_path):
-    csv_content = "50,1,2,120,220,0,0,150,0,2.3,1,0,3,0\n"
-    file_path = tmp_path / "processed.cleveland.data"
-    file_path.write_text(csv_content)
-    # Write empty files for the others to satisfy init
-    for name in ["va", "hungarian", "switzerland"]:
-        (tmp_path / f"processed.{name}.data").write_text(csv_content)
+def test_HeartDatasetLoader(tmp_path):
+    # Set up fake CSV files
+    columns = ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num"]
+    for name in ["processed.cleveland.data", "processed.va.data", "processed.hungarian.data", "processed.switzerland.data"]:
+        pd.DataFrame([[25,1,1,120,200,0,0,150,0,1.0,2,0,3,0]], columns=columns).to_csv(tmp_path / name, index=False, header=False)
     loader = HeartDatasetLoader(str(tmp_path))
     df = loader.get("cleveland")
     assert isinstance(df, pd.DataFrame)
-    assert list(df.columns) == [
-        "age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", 
-        "exang", "oldpeak", "slope", "ca", "thal", "num"
-    ]
-    assert df.iloc[0]["age"] == 50
-"""
+    assert "age" in df.columns
+    assert df.iloc[0]["chol"] == 200
+
+def test_get_city_color():
+    assert HeartDatasetLoader.get_city_color("Cleveland") == "#eb4034"
+    assert HeartDatasetLoader.get_city_color("Unknown") == "#000000"
