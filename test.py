@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from Bio_analyzer import create_table, HeartDatasetLoader  
+from dataset_analysis import create_table, HeartDatasetLoader  
 
 def test_create_table():
     cleveland = pd.DataFrame({'age': [25, 35, 45], 'chol': [200, 220, 240]})
@@ -8,17 +8,13 @@ def test_create_table():
     hungarian = pd.DataFrame({'age': [27, 37, 47], 'chol': [190, 215, 250]})
     switzerland = pd.DataFrame({'age': [30, 40, 50], 'chol': [0, 0, 0]}) 
     
-    result = create_table(cleveland, california, hungarian, switzerland)
-    # Check index is correct
-    assert set(result.index) == {'Cleveland', 'San Francisco', 'Budapest'}
-    # Check columns are correct (age groups)
-    assert '30-39' in result.columns
-    # Check values are means (manually check one value)
-    assert np.isclose(result.loc['Cleveland', '20-29'], 200)
-    assert np.isnan(result.loc['San Francisco', '20-29'])
+    table = create_table(cleveland, california, hungarian, switzerland)
+    assert set(table.index) == {'Cleveland', 'San Francisco', 'Budapest'}
+    assert '30-39' in table.columns
+    assert np.isclose(table.loc['Cleveland', '20-29'], 200)
+    assert np.isnan(table.loc['San Francisco', '20-29'])
 
 def test_HeartDatasetLoader(tmp_path):
-    # Set up fake CSV files
     columns = ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num"]
     for name in ["processed.cleveland.data", "processed.va.data", "processed.hungarian.data", "processed.switzerland.data"]:
         pd.DataFrame([[25,1,1,120,200,0,0,150,0,1.0,2,0,3,0]], columns=columns).to_csv(tmp_path / name, index=False, header=False)
