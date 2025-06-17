@@ -41,7 +41,7 @@ def main():
     hungarian_df = loader.get("hungarian")
     switzerland_df = loader.get("switzerland")
 
-    st.title("HEART-SYMPTOMS DATASET`S ANALYSIS")
+    st.title("HEART-SYMPTOMS DATASET ANALYSIS")
     show_map()
     dataset(cleveland_df, california_df, hungarian_df, switzerland_df, loader)
     st.header("Exploring the data")
@@ -152,11 +152,18 @@ def dataset(cleveland_df, california_df, hungarian_df, switzerland_df, loader):
         multiplier += 1
 
     ax.set_ylabel('n of scores available')
-    ax.set_title('Dataset`s score by attribute')
+    ax.set_title('Dataset score by attribute')
     ax.set_xticks(x + width, attributes)
     ax.legend(loc='upper left', ncols=4)
     ax.set_ylim(0, 350)
     st.pyplot(fig)
+    st.write(
+    "Cleveland and Budapest have the most complete data, with consistently high numbers of scores across all attributes. "
+    "San Francisco has fewer records overall, especially for trestbps and chol. "
+    "Zurich has notably limited data, particularly for restecg, where it has very few scores available compared to the other cities.\n\n"
+    "This suggests that while Cleveland and Budapest provide strong coverage for analysis, data from Zurich and San Francisco may be less reliable "
+    "due to missing values in key attributes."
+)
 
 
 def gaussian(cleveland_df, california_df, hungarian_df, switzerland_df, loader):
@@ -191,7 +198,7 @@ def gaussian(cleveland_df, california_df, hungarian_df, switzerland_df, loader):
 
     st.subheader("Gaussian Fit for trestbps of different cities")
     st.pyplot(fig)
-    st.write("I genuinely expected to find higher values for american cities (it was really the only purpose of the plot) but interstingly Cleveland takes place behind Budapest. Another finding is that turistic cities like San Francisco and Zurich have broader std probably for the presence of different ethnical groups")
+    st.write("I genuinely expected to find higher values for american cities (it was really the only purpose of the plot) but interstingly Cleveland takes place behind Budapest. Another finding is that turistic cities like San Francisco and Zurich have broader std probably for the presence of different ethnical groups or just cause they're less reliable (like we said earlier).")
 
     st.divider()
     st.subheader("Cholesterol mean (mg/dl) by Age and City")
@@ -211,7 +218,7 @@ def gaussian(cleveland_df, california_df, hungarian_df, switzerland_df, loader):
     ax.set_title("Cholesterol (mean) by Age Group and City")
     fig.tight_layout()
     st.pyplot(fig)
-    st.write("Unfortunately we have no measurement for Zurich")
+    st.write("Unfortunately, we don't have any data for Zurich. However, we can observe that different age groups within the same city have different dietary habits. Another interesting point is that San Francisco is the only city in the dataset where the correlation between age and cholesterol is relatively weak.")
 
 
 def create_table(cleveland_df, california_df, hungarian_df, switzerland_df):
