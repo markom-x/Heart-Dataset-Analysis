@@ -4,10 +4,6 @@
 
 ### This presentation was made for training purposes. I'm using the most common libraries in data analysis (like pandas, numpy, matplotlib and scipy) to enhance skills also in python since this was created as a final project to the CS50P-Harvard online course
 
-
-# 🫀 Heart Symptoms Dataset Analysis
-
-
 ## 🌍 Project Summary
 
 This tool leverages clinical data from four different hospitals and regions:
@@ -86,24 +82,28 @@ A linear regression is computed and visualized using `numpy.polyfit()`:
 slope, intercept = np.polyfit(x, y, deg=1)
 ax.plot(x, slope * x + intercept)
 ```
+
 ---
 
 ## 🧪 Running the App
+
 Install the required packages:
 
-```
+```python
 pip install streamlit pandas matplotlib seaborn scipy
 ```
 
 Set the correct base_path to where your .data files are located in the script, then launch the app with:
 
-```
+```bash
 streamlit run dataset_analysis.py
 ```
+
 ---
+
 ## 📁 Project Structure
 
-```
+```kotlin
 heart-analysis/
 ├── heart_analysis_app.py
 ├── processed.cleveland.data
@@ -111,6 +111,7 @@ heart-analysis/
 ├── processed.hungarian.data
 └── processed.switzerland.data
 ```
+
 ## 🙌 Acknowledgments
 
 UCI Machine Learning Repository – Heart Disease Dataset

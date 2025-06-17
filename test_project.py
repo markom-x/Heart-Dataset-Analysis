@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from dataset_analysis import create_table, HeartDatasetLoader  
+from project import create_table, HeartDatasetLoader  
 
 def test_create_table():
     cleveland = pd.DataFrame({'age': [25, 35, 45], 'chol': [200, 220, 240]})

@@ -50,10 +50,6 @@ def main():
     data(cleveland_df, california_df, hungarian_df, switzerland_df)
 
 
-def get_sample(df):
-    print(df.head())
-
-
 def show_map():
     st.header("Dataset map")
     st.markdown('''
@@ -75,7 +71,6 @@ def show_map():
     )
     st.map(df, latitude="lat", longitude="lon", color="col", zoom=1.55)
     st.divider()
-
 
 
 def data(cleveland_df, california_df, hungarian_df, switzerland_df):
@@ -116,11 +111,6 @@ def data(cleveland_df, california_df, hungarian_df, switzerland_df):
     st.write("once found m and b thanks to partial derivatives (studying for what values the cost functions J(m, b) reaches his minimum) we have the line that fits all the data")
     st.latex(r"\hat{y} = mx + b")
     st.divider()
-
-    
-
-
-
 
 
 def dataset(cleveland_df, california_df, hungarian_df, switzerland_df, loader):
