@@ -2,7 +2,7 @@
 
 ## Video Demo:  <URL https://youtu.be/mDDJyOlFdZk>
 
-### This presentation was made for training purposes. I'm using the most common libraries in data analysis (like pandas, numpy, matplotlib and scipy) to enhance skills also in python since this was created as a final project to the CS50P-Harvard online course
+### This presentation was made for training purposes. I'm using the most common libraries in data analysis (like pandas, numpy, matplotlib and scipy) to enhance different skills, this was created as a final project to the CS50P-Harvard online course
 
 ## 🌍 Project Summary
 
